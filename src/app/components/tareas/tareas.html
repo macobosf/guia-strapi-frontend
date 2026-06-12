@@ -1,0 +1,81 @@
+<div class="container">
+  <h1>Lista de Tareas</h1>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Formulario -->
+  <div class="form-card">
+    <h2>Nueva tarea</h2>
+
+    <div class="form-group">
+      <label for="titulo">Título</label>
+      <input
+        id="titulo"
+        type="text"
+        [(ngModel)]="nuevoTitulo"
+        placeholder="Ej: Configurar Strapi"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="descripcion">Descripción</label>
+      <textarea
+        id="descripcion"
+        [(ngModel)]="nuevaDescripcion"
+        placeholder="Descripción opcional..."
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="prioridad">Prioridad</label>
+      <select id="prioridad" [(ngModel)]="nuevaPrioridad">
+        <option value="baja">Baja</option>
+        <option value="media">Media</option>
+        <option value="alta">Alta</option>
+      </select>
+    </div>
+
+    <button class="btn-primary" (click)="crearTarea()">
+      Crear tarea
+    </button>
+  </div>
+
+  <!-- Lista -->
+  <h2>Tareas ({{ tareas().length }})</h2>
+
+  @if (cargando()) {
+    <p>Cargando...</p>
+  }
+
+  @if (!cargando() && tareas().length === 0) {
+    <p class="empty">No hay tareas. ¡Crea la primera!</p>
+  }
+
+  <div class="task-list">
+    @for (tarea of tareas(); track tarea.documentId) {
+      <div class="task-item" [class.done]="tarea.completada">
+        <input
+          type="checkbox"
+          [checked]="tarea.completada"
+          (change)="toggleCompletada(tarea)"
+        />
+        <div class="task-body">
+          <strong>{{ tarea.titulo }}</strong>
+          @if (tarea.descripcion) {
+            <p>{{ tarea.descripcion }}</p>
+          }
+          <span class="badge badge-{{ tarea.prioridad }}">
+            {{ tarea.prioridad }}
+          </span>
+        </div>
+        <button class="btn-delete" (click)="eliminarTarea(tarea.documentId)">
+          Eliminar
+        </button>
+      </div>
+    }
+  </div>
+</div>
